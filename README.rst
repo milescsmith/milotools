@@ -35,6 +35,8 @@ Plotting Utils
    :target: https://github.com/psf/black
    :alt: Black
 
+Just a series of functions that I keep redefining in jupyter notebooks
+
 
 Features
 --------
