@@ -5,7 +5,7 @@ import seaborn as sns
 
 
 def map_series_palette(sr: pd.Series, palette: str = "hls") -> pd.DataFrame:
-    if sr.dtype == "category":
+    if str(sr.dtype) == "category":
         return pd.DataFrame(
             sr.astype(int).map(
                 dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique()))))
