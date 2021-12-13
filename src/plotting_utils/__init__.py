@@ -7,16 +7,8 @@ import matplotlib.gridspec as gridspec
 
 
 def map_series_palette(sr: pd.Series, palette: str = "hls") -> pd.DataFrame:
-    if str(sr.dtype) == "category":
-        return pd.DataFrame(
-            sr.astype(int).map(
-                dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique()))))
-            )
-        )
-    else:
-        return pd.DataFrame(
-            sr.map(dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique())))))
-        )
+    tmp_sr = force_downcast_categorical(sr.copy())
+    return tmp_sr.map(dict(zip(tmp_sr.unique(), sns.color_palette(palette, len(tmp_sr.unique())))))
 
 
 def scale_col(col: np.ndarray) -> np.ndarray:
@@ -110,3 +102,19 @@ class SeabornFig2Grid():
 
     def _resize(self, evt=None):
         self.sg.fig.set_size_inches(self.fig.get_size_inches())
+
+
+def force_downcast_categorical(sr: pd.Series) -> pd.Series:
+    """Because sometimes you just can't get Pandas to
+    make `pandas.Series.convert_dtypes` to convert a series
+    from an object to string
+    """
+    new_sr = sr.convert_dtypes()
+    if new_sr.dtype == "O":
+        new_sr = sr.astype(type(sr[0]))
+        if new_sr.dtype == "O":
+            return sr.astype("string")
+        else:
+            return new_sr
+    else:
+        return new_sr
