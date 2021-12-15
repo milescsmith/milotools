@@ -108,9 +108,9 @@ class SeabornFig2Grid():
 def above_below(x: float, lower: float, upper: float) -> float:
     if (x > lower) and (x < upper):
         return x
-    elif x < lower:
+    elif x <= lower:
         return lower
-    elif x > upper:
+    elif x => upper:
         return upper
 
 vec_above_below = np.vectorize(above_below, otypes=[float])
