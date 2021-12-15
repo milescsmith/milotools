@@ -8,7 +8,7 @@ from functools import singledispatch
 
 
 def map_series_palette(sr: pd.Series, palette: str = "hls") -> dict[str, tuple[float,float,float]]:
-    base_type = type(sr[0])
+    base_type = type(sr.iloc[0])
     return sr.astype(base_type).map(dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique())))))
 
 
