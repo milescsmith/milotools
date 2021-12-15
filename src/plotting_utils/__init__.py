@@ -4,10 +4,12 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from functools import singledispatch
 
 
 def map_series_palette(sr: pd.Series, palette: str = "hls") -> dict[str, tuple[float,float,float]]:
-    return dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique()))))
+    base_type = type(sr[0])
+    return sr.astype(base_type).map(dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique())))))
 
 
 def scale_col(col: np.ndarray) -> np.ndarray:
@@ -101,3 +103,32 @@ class SeabornFig2Grid():
 
     def _resize(self, evt=None):
         self.sg.fig.set_size_inches(self.fig.get_size_inches())
+
+
+def above_below(x: float, lower: float, upper: float) -> float:
+    if (x > lower) and (x < upper):
+        return x
+    elif x < lower:
+        return lower
+    elif x > upper:
+        return upper
+
+vec_above_below = np.vectorize(above_below, otypes=[float])
+
+@singledispatch
+def quantile_trim(arr, lower: float=0.10, upper: float=0.99):
+    print(f"Attempting to trim an array of length {len(arr)}, lower bounds = {lower}, upper bounds = {upper}")
+
+
+@quantile_trim.register
+def _(arr: np.ndarray, lower: float=0.10, upper: float=0.99) -> np.ndarray:
+    lower_bounds = np.quantile(arr, lower)
+    upper_bounds = np.quantile(arr, upper)
+    return vec_above_below(arr, lower_bounds, upper_bounds)
+
+
+@quantile_trim.register
+def _(arr: pd.Series, lower: float=0.10, upper: float=0.99) -> pd.Series:
+    lower_bounds = np.quantile(arr, lower)
+    upper_bounds = np.quantile(arr, upper)
+    return arr.apply(above_below, lower=lower_bounds, upper=upper_bounds)
