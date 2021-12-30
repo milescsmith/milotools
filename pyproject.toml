@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "utils"
+name = "milotools"
 version = "0.7.0"
 description = "Utility functions"
 authors = ["Miles Smith <miles-smith@omrf.org>"]
