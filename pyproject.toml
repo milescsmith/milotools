@@ -5,15 +5,15 @@ description = "Utility functions"
 authors = ["Miles Smith <miles-smith@omrf.org>"]
 license = "GPL-3.0"
 readme = "README.rst"
-homepage = "https://github.com/milescsmith/plotting-utils"
-repository = "https://github.com/milescsmith/plotting-utils"
+homepage = "https://github.com/milescsmith/milotools"
+repository = "https://github.com/milescsmith/milotools"
 documentation = "https://plotting-utils.readthedocs.io"
 classifiers = [
     "Development Status :: 4 - Beta",
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/milescsmith/plotting-utils/releases"
+Changelog = "https://github.com/milescsmith/milotools/releases"
 
 [tool.poetry.dependencies]
 python = ">=3.8.3,<3.11"
@@ -52,7 +52,7 @@ source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 branch = true
-source = ["plotting_utils"]
+source = ["milotools"]
 
 [tool.coverage.report]
 show_missing = true
