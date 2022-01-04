@@ -8,6 +8,7 @@ def add_method(cls):
     so, for instance, I can add this `filter_by` function to pandas.DataFrame
     without creating a new class that inherits from DataFrame
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -15,4 +16,5 @@ def add_method(cls):
 
         setattr(cls, func.__name__, wrapper)
         return func
+
     return decorator

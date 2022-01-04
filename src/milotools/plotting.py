@@ -7,9 +7,13 @@ import matplotlib.gridspec as gridspec
 from functools import singledispatch
 
 
-def map_series_palette(sr: pd.Series, palette: str = "hls") -> dict[str, tuple[float,float,float]]:
+def map_series_palette(
+    sr: pd.Series, palette: str = "hls"
+) -> dict[str, tuple[float, float, float]]:
     base_type = type(sr.iloc[0])
-    return sr.astype(base_type).map(dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique())))))
+    return sr.astype(base_type).map(
+        dict(zip(sr.unique(), sns.color_palette(palette, len(sr.unique()))))
+    )
 
 
 def scale_col(col: np.ndarray) -> np.ndarray:
@@ -36,13 +40,13 @@ def show_values_on_bars(axs):
 
 
 # stolen from https://stackoverflow.com/a/47664533
-class SeabornFig2Grid():
+class SeabornFig2Grid:
     """hack class that allows for adding complex seaborn plots
     that are technically already their own complex subplots
     to be added together.
-    
+
     Example:
-    
+
     fig = plt.figure(figsize =(12,6))
     gs = gridspec.GridSpec(1,2)
     g0 = sns.JointGrid(x=np.log1p(plot_df["CD45"]), y=np.log1p(plot_df["Ecad"]))
@@ -53,43 +57,46 @@ class SeabornFig2Grid():
     plt.show()
     """
 
-    def __init__(self, seaborngrid, fig,  subplot_spec):
+    def __init__(self, seaborngrid, fig, subplot_spec):
         self.fig = fig
         self.sg = seaborngrid
         self.subplot = subplot_spec
-        if isinstance(self.sg, sns.axisgrid.FacetGrid) or \
-            isinstance(self.sg, sns.axisgrid.PairGrid):
+        if isinstance(self.sg, sns.axisgrid.FacetGrid) or isinstance(
+            self.sg, sns.axisgrid.PairGrid
+        ):
             self._movegrid()
         elif isinstance(self.sg, sns.axisgrid.JointGrid):
             self._movejointgrid()
         self._finalize()
 
     def _movegrid(self):
-        """ Move PairGrid or Facetgrid """
+        """Move PairGrid or Facetgrid"""
         self._resize()
         n = self.sg.axes.shape[0]
         m = self.sg.axes.shape[1]
-        self.subgrid = gridspec.GridSpecFromSubplotSpec(n,m, subplot_spec=self.subplot)
+        self.subgrid = gridspec.GridSpecFromSubplotSpec(n, m, subplot_spec=self.subplot)
         for i in range(n):
             for j in range(m):
-                self._moveaxes(self.sg.axes[i,j], self.subgrid[i,j])
+                self._moveaxes(self.sg.axes[i, j], self.subgrid[i, j])
 
     def _movejointgrid(self):
-        """ Move Jointgrid """
-        h= self.sg.ax_joint.get_position().height
-        h2= self.sg.ax_marg_x.get_position().height
-        r = int(np.round(h/h2))
+        """Move Jointgrid"""
+        h = self.sg.ax_joint.get_position().height
+        h2 = self.sg.ax_marg_x.get_position().height
+        r = int(np.round(h / h2))
         self._resize()
-        self.subgrid = gridspec.GridSpecFromSubplotSpec(r+1,r+1, subplot_spec=self.subplot)
+        self.subgrid = gridspec.GridSpecFromSubplotSpec(
+            r + 1, r + 1, subplot_spec=self.subplot
+        )
 
         self._moveaxes(self.sg.ax_joint, self.subgrid[1:, :-1])
         self._moveaxes(self.sg.ax_marg_x, self.subgrid[0, :-1])
         self._moveaxes(self.sg.ax_marg_y, self.subgrid[1:, -1])
 
     def _moveaxes(self, ax, gs):
-        #https://stackoverflow.com/a/46906599/4124317
+        # https://stackoverflow.com/a/46906599/4124317
         ax.remove()
-        ax.figure=self.fig
+        ax.figure = self.fig
         self.fig.axes.append(ax)
         self.fig.add_axes(ax)
         ax._subplotspec = gs
@@ -113,22 +120,26 @@ def above_below(x: float, lower: float, upper: float) -> float:
     elif x >= upper:
         return upper
 
+
 vec_above_below = np.vectorize(above_below, otypes=[float])
 
+
 @singledispatch
-def quantile_trim(arr, lower: float=0.10, upper: float=0.99):
-    print(f"Attempting to trim an array of length {len(arr)}, lower bounds = {lower}, upper bounds = {upper}")
+def quantile_trim(arr, lower: float = 0.10, upper: float = 0.99):
+    print(
+        f"Attempting to trim an array of length {len(arr)}, lower bounds = {lower}, upper bounds = {upper}"
+    )
 
 
 @quantile_trim.register
-def _(arr: np.ndarray, lower: float=0.10, upper: float=0.99) -> np.ndarray:
+def _(arr: np.ndarray, lower: float = 0.10, upper: float = 0.99) -> np.ndarray:
     lower_bounds = np.quantile(arr, lower)
     upper_bounds = np.quantile(arr, upper)
     return vec_above_below(arr, lower_bounds, upper_bounds)
 
 
 @quantile_trim.register
-def _(arr: pd.Series, lower: float=0.10, upper: float=0.99) -> pd.Series:
+def _(arr: pd.Series, lower: float = 0.10, upper: float = 0.99) -> pd.Series:
     lower_bounds = np.quantile(arr, lower)
     upper_bounds = np.quantile(arr, upper)
     return arr.apply(above_below, lower=lower_bounds, upper=upper_bounds)

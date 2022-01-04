@@ -9,9 +9,9 @@ def diff_expr(
     df: pd.DataFrame,
     grouping_col: str,
     value_col: str,
-    expr_threshold: int=0,
-    logfc_threshold: float=0.25
-    ) -> pd.DataFrame:
+    expr_threshold: int = 0,
+    logfc_threshold: float = 0.25,
+) -> pd.DataFrame:
     """Calculate differential expression of one feature for one group versus
     all other groups. Modeled after `find_markers()` from the R package {Seurat}.
 
@@ -25,7 +25,7 @@ def diff_expr(
         grouping_col (str): Some sort of group identites
         value_col (str): Expression values for one feature
         expr_threshold (int, optional): Defaults to 0.
-        logfc_threshold (float, optional): Fold change threshold.  If the 
+        logfc_threshold (float, optional): Fold change threshold.  If the
             group/every_other_group fold change is not greater than this, ignore.
             Increasing this will improve the adjusted p value by decreasing
             the number of multiple comparisons. Defaults to 0.25.
@@ -44,56 +44,60 @@ def diff_expr(
         current_group_vals = df[df[grouping_col] == current_group][value_col]
         other_group_vals = df[df[grouping_col].isin(other_groups)][value_col]
 
-        deg_dict[current_group] =  np.log2(np.mean(current_group_vals)/np.mean(other_group_vals))
-        stats_dict[current_group] =  mannwhitneyu(current_group_vals, other_group_vals, alternative="two-sided")
+        deg_dict[current_group] = np.log2(
+            np.mean(current_group_vals) / np.mean(other_group_vals)
+        )
+        stats_dict[current_group] = mannwhitneyu(
+            current_group_vals, other_group_vals, alternative="two-sided"
+        )
 
-        pct_1[current_group] =  sum(_ > expr_threshold for _ in current_group_vals)/len(current_group_vals)
-        pct_2[current_group] =  sum(_ > expr_threshold for _ in other_group_vals)/len(other_group_vals)
+        pct_1[current_group] = sum(
+            _ > expr_threshold for _ in current_group_vals
+        ) / len(current_group_vals)
+        pct_2[current_group] = sum(_ > expr_threshold for _ in other_group_vals) / len(
+            other_group_vals
+        )
     deg_df = (
-        pd.DataFrame
-            .from_dict(
-                data=deg_dict,
-                orient="index",
-                columns=["avg_log2FC"],
-            )
-            # .rename(columns={0: "avg_log2FC"})
-            .merge(
-                right=(
-                    pd.DataFrame
-                        .from_dict(
-                            data=stats_dict,
-                            orient="index",
-                        )
-                ),
-                left_index=True,
-                right_index=True
-            )
-            .merge(
-                right=(
-                    pd.DataFrame
-                        .from_dict(
-                            data=pct_1,
-                            orient="index",
-                            columns=["pct_1"],
-                        )
-                ),
-                left_index=True,
-                right_index=True
-            )
-            .merge(
-                right=(
-                    pd.DataFrame
-                        .from_dict(
-                            data=pct_2,
-                            orient="index",
-                            columns=["pct_2"],
-                        )
-                ),
-                left_index=True,
-                right_index=True
-            )
+        pd.DataFrame.from_dict(
+            data=deg_dict,
+            orient="index",
+            columns=["avg_log2FC"],
+        )
+        # .rename(columns={0: "avg_log2FC"})
+        .merge(
+            right=(
+                pd.DataFrame.from_dict(
+                    data=stats_dict,
+                    orient="index",
+                )
+            ),
+            left_index=True,
+            right_index=True,
+        )
+        .merge(
+            right=(
+                pd.DataFrame.from_dict(
+                    data=pct_1,
+                    orient="index",
+                    columns=["pct_1"],
+                )
+            ),
+            left_index=True,
+            right_index=True,
+        )
+        .merge(
+            right=(
+                pd.DataFrame.from_dict(
+                    data=pct_2,
+                    orient="index",
+                    columns=["pct_2"],
+                )
+            ),
+            left_index=True,
+            right_index=True,
+        )
     )
-    
+
     deg_df = deg_df[abs(deg_df["avg_log2FC"]) >= logfc_threshold]
     deg_df["marker"] = value_col
     reject, pvals_corrected, alphacSidak, alphacBonf = multipletests(deg_df["pvalue"])

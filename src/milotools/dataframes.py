@@ -14,13 +14,14 @@ def filter_by(self, col: str, other: pd.Series):
 @add_method(pd.DataFrame)
 @singledispatch
 def nrows(obj) -> int:
-    """stupid, but I'm lazy
-    """
+    """stupid, but I'm lazy"""
     pass
+
 
 @nrows.register
 def _(obj: pd.Series) -> int:
     return len(pd.Series)
+
 
 @nrows.register
 def _(obj: pd.DataFrame) -> int:
@@ -29,5 +30,5 @@ def _(obj: pd.DataFrame) -> int:
 
 @add_method(pd.DataFrame)
 def mutate(self: pd.DataFrame, col: str, func: Callable, *args: Any) -> pd.DataFrame:
-    self[col] = self[col].apply(func, args)
+    self[col] = self.copy(deep=True).loc[:, col].apply(func, args)
     return self
