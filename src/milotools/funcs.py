@@ -1,6 +1,4 @@
-from functools import wraps, singledispatch
-
-import pandas as pd
+from functools import wraps
 
 
 def add_method(cls):
@@ -18,24 +16,3 @@ def add_method(cls):
         setattr(cls, func.__name__, wrapper)
         return func
     return decorator
-
-
-@add_method(pd.DataFrame)
-def filter_by(self, col: str, other: pd.Series):
-    return self[self[col].isin(other)]
-
-
-@add_method(pd.DataFrame)
-@singledispatch
-def nrows(obj) -> int:
-    """stupid, but I'm lazy
-    """
-    pass
-
-@nrows.register
-def _(obj: pd.Series) -> int:
-    return len(pd.Series)
-
-@nrows.register
-def _(obj: pd.DataFrame) -> int:
-    return obj.shape[0]
