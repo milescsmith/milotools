@@ -1,10 +1,11 @@
 """Plotting Utils."""
+from functools import singledispatch
+
+import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-from functools import singledispatch
 
 
 def map_series_palette(

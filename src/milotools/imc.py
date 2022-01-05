@@ -1,6 +1,6 @@
 """Utility functions for working with imaging mass spec data"""
-import pandas as pd
 import numpy as np
+import pandas as pd
 from scipy.stats import mannwhitneyu
 from statsmodels.stats.multitest import multipletests
 

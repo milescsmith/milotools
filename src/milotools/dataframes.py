@@ -1,5 +1,5 @@
 from functools import singledispatch
-from typing import Callable, Any
+from typing import Any, Callable
 
 import pandas as pd
 
@@ -29,6 +29,13 @@ def _(obj: pd.DataFrame) -> int:
 
 
 @add_method(pd.DataFrame)
-def mutate(self: pd.DataFrame, col: str, func: Callable, *args: Any) -> pd.DataFrame:
-    self[col] = self.copy(deep=True).loc[:, col].apply(func, args)
-    return self
+def mutate(
+    self: pd.DataFrame, col: str, func: Callable, inplace: bool = False, *args: Any
+) -> pd.DataFrame:
+    if inplace:
+        self[col] = self.loc[:, col].apply(func, args)
+        return self
+    else:
+        df = self.copy(deep=True)
+        df[col] = df.loc[:, col].apply(func, args)
+        return df
