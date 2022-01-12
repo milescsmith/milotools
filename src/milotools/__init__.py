@@ -15,3 +15,5 @@ try:
     __version__ = version(__name__)
 except KeyError:  # pragma: no cover
     __version__ = "unknown"
+
+from . import plotting, dataframes, funcs, imc

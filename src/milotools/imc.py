@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 from scipy.stats import mannwhitneyu
 from statsmodels.stats.multitest import multipletests
-
+from joblib import Parallel, delayed
+from multiprocessing import cpu_count
+from typing import Optional
 
 def diff_expr(
     df: pd.DataFrame,
@@ -103,3 +105,21 @@ def diff_expr(
     reject, pvals_corrected, alphacSidak, alphacBonf = multipletests(deg_df["pvalue"])
     deg_df["padj"] = pvals_corrected
     return deg_df
+
+
+def diff_expr_all(
+    df: pd.DataFrame,
+    value_col: str,
+    grouping_col: str,
+    n_jobs: Optional[int]=None,
+    *args
+    ) -> pd.DataFrame:
+    
+    if n_jobs is None:
+        n_jobs=cpu_count()
+    
+    diff_res_dfs = Parallel(n_jobs=n_jobs)(
+        delayed(diff_expr)(df, grouping_col, _, *args) for _ in value_col
+        )
+    
+    return pd.concat(diff_res_dfs)
