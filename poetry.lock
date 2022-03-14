@@ -367,6 +367,22 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "importlib-metadata"
+version = "4.11.3"
+description = "Read metadata from Python packages"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+zipp = ">=0.5"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=9)", "rst.linker (>=1.9)"]
+perf = ["ipython"]
+testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "packaging", "pyfakefs", "flufl.flake8", "pytest-perf (>=0.9.2)", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)", "importlib-resources (>=1.3)"]
+
+[[package]]
 name = "iniconfig"
 version = "1.1.1"
 description = "iniconfig: brain-dead simple config-ini parsing"
@@ -875,7 +891,7 @@ python-versions = "*"
 
 [[package]]
 name = "sphinx"
-version = "4.3.2"
+version = "4.4.0"
 description = "Python documentation generator"
 category = "dev"
 optional = false
@@ -887,6 +903,7 @@ babel = ">=1.3"
 colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
 docutils = ">=0.14,<0.18"
 imagesize = "*"
+importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
 Jinja2 = ">=2.3"
 packaging = "*"
 Pygments = ">=2.0"
@@ -901,7 +918,7 @@ sphinxcontrib-serializinghtml = ">=1.1.5"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["flake8 (>=3.5.0)", "isort", "mypy (>=0.920)", "docutils-stubs", "types-typed-ast", "types-pkg-resources", "types-requests"]
+lint = ["flake8 (>=3.5.0)", "isort", "mypy (>=0.931)", "docutils-stubs", "types-typed-ast", "types-requests"]
 test = ["pytest", "pytest-cov", "html5lib", "cython", "typed-ast"]
 
 [[package]]
@@ -1144,10 +1161,22 @@ jupyter = ["nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel"]
 optional = ["pygments", "colorama", "nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel"]
 tests = ["codecov", "scikit-build", "cmake", "ninja", "pybind11", "pytest", "pytest", "pytest-cov", "pytest", "pytest", "pytest-cov", "typing", "nbformat", "nbconvert", "jupyter-client", "ipython", "ipykernel", "pytest", "pytest-cov"]
 
+[[package]]
+name = "zipp"
+version = "3.7.0"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
+
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.3,<3.11"
-content-hash = "9f61f5c8faf59eedda498b94c57e7293da3fd2a0e355ae5d6eec29c1b652a800"
+content-hash = "a605a31e402680b4e965bf2c5f5e839d64efea5e66541d26c0b11ce0fde497a6"
 
 [metadata.files]
 alabaster = [
@@ -1321,6 +1350,10 @@ idna = [
 imagesize = [
     {file = "imagesize-1.3.0-py2.py3-none-any.whl", hash = "sha256:1db2f82529e53c3e929e8926a1fa9235aa82d0bd0c580359c67ec31b2fddaa8c"},
     {file = "imagesize-1.3.0.tar.gz", hash = "sha256:cd1750d452385ca327479d45b64d9c7729ecf0b3969a58148298c77092261f9d"},
+]
+importlib-metadata = [
+    {file = "importlib_metadata-4.11.3-py3-none-any.whl", hash = "sha256:1208431ca90a8cca1a6b8af391bb53c1a2db74e5d1cef6ddced95d4b2062edc6"},
+    {file = "importlib_metadata-4.11.3.tar.gz", hash = "sha256:ea4c597ebf37142f827b8f39299579e31685c31d3a438b59f469406afd0f2539"},
 ]
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
@@ -1815,8 +1848,8 @@ snowballstemmer = [
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
 ]
 sphinx = [
-    {file = "Sphinx-4.3.2-py3-none-any.whl", hash = "sha256:6a11ea5dd0bdb197f9c2abc2e0ce73e01340464feaece525e64036546d24c851"},
-    {file = "Sphinx-4.3.2.tar.gz", hash = "sha256:0a8836751a68306b3fe97ecbe44db786f8479c3bf4b80e3a7f5c838657b4698c"},
+    {file = "Sphinx-4.4.0-py3-none-any.whl", hash = "sha256:5da895959511473857b6d0200f56865ed62c31e8f82dd338063b84ec022701fe"},
+    {file = "Sphinx-4.4.0.tar.gz", hash = "sha256:6caad9786055cb1fa22b4a365c1775816b876f91966481765d7d50e9f0dd35cc"},
 ]
 sphinx-autobuild = [
     {file = "sphinx-autobuild-2021.3.14.tar.gz", hash = "sha256:de1ca3b66e271d2b5b5140c35034c89e47f263f2cd5db302c9217065f7443f05"},
@@ -1858,29 +1891,36 @@ statsmodels = [
     {file = "statsmodels-0.13.1-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:0caa9f4d544c84a9e656946865dce17eb7cc32a9d3aff86bdbac7e87928341f1"},
     {file = "statsmodels-0.13.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:dbfced7327766960226852c4849e76eec86e222692ca9af69e9bba31dadf7527"},
     {file = "statsmodels-0.13.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8483e09b5d1583fc23f029440b1e7ef2ea52227d084ffe944a5f8222aadb9e4d"},
+    {file = "statsmodels-0.13.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8fb372e166babc7e976974814c1448891e467dbe77062914377ad5cda5dd2f8a"},
     {file = "statsmodels-0.13.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:92bd818b65cf60b7440876d7428cc069efad018d5ba2b9b35497fb7e221e0ea7"},
     {file = "statsmodels-0.13.1-cp310-cp310-win_amd64.whl", hash = "sha256:d039937c4cf2cccc254db7e4d32df4696b614b9d27cf6756e3ddda2803eb3c8e"},
     {file = "statsmodels-0.13.1-cp310-none-win_amd64.whl", hash = "sha256:1634fad45c14f703c886fdbaf9a7c5b22514338bab5d30e17167a2bfe7ef93cd"},
     {file = "statsmodels-0.13.1-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:2a0a154c294171c775c67cd9a8d9adb69a5bc29f2c203632b7d5f191cc7e2c81"},
     {file = "statsmodels-0.13.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2e156ea80804b2da5bade1ec8d8c87c795971c12fa9a8eaf7023d6a12a21d398"},
+    {file = "statsmodels-0.13.1-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b801978a2ba5c490fe20a3d56d52c4efb1219ce4d56d3dc295fa51d1edea4960"},
     {file = "statsmodels-0.13.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae0a7265fb00b9d188346b938e4883b5fc0a4fa891b9baf013d9b9fada9cb4d3"},
     {file = "statsmodels-0.13.1-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:2c06e63be9d6ce367c548c95abec85af6ad7495d8d665549424af86cfbc63d1f"},
+    {file = "statsmodels-0.13.1-cp37-cp37m-win32.whl", hash = "sha256:b2fe07732807423a051c3d322ca7bf2f386688482a38c9a9da32539534710aad"},
     {file = "statsmodels-0.13.1-cp37-cp37m-win_amd64.whl", hash = "sha256:dc3bc435024996d1a11233fd8dbd18ac2f52259c667ff2a2e22c3e1203f44fe5"},
     {file = "statsmodels-0.13.1-cp37-none-win32.whl", hash = "sha256:e2e8420c5afa623e1e3a4d38eb67c7bf2825c4ea9be40509c2f692f9c9bfaab7"},
     {file = "statsmodels-0.13.1-cp37-none-win_amd64.whl", hash = "sha256:07031985eb97190b8fef29c818ced065738de9043a886d11896ba40c90b64e07"},
     {file = "statsmodels-0.13.1-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:187c19d27764b6b06322eaa1e3443e9db703a7254df8291d642c4c630e10cc43"},
     {file = "statsmodels-0.13.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:723fa3511814579fb837b13648d2d90282475baef186353d1a04b51a4b1ab50f"},
     {file = "statsmodels-0.13.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:0cccdce24b00b30206ac9a17a963a51ba07d98931ae70e5b8b57ddc896527e83"},
+    {file = "statsmodels-0.13.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d5667aa19384c4f2520c8e9a09aff1f6538bb4779f1b08fa8ecb9e134dafef69"},
     {file = "statsmodels-0.13.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:960e65b7ed1adbe89b8f2c5656ef99bc17dd5d56e334a074883282dce03703cd"},
     {file = "statsmodels-0.13.1-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d6cc88f7a36681a10d5fea9d557c053eecd12a083c623f31e04208751e01954a"},
+    {file = "statsmodels-0.13.1-cp38-cp38-win32.whl", hash = "sha256:7dc2bdfb9ba92e4d306d6e6a24f29006ab0e52dc500af7d3ad576ff00831d276"},
     {file = "statsmodels-0.13.1-cp38-cp38-win_amd64.whl", hash = "sha256:0d5dec29a9106e4c5b2705b43b516fa02011858a79b3cd53d65704e5258beb03"},
     {file = "statsmodels-0.13.1-cp38-none-win32.whl", hash = "sha256:fd106fab426969782c755e7be3734c3a6bd960a885b665f2c463bff6112a09f8"},
     {file = "statsmodels-0.13.1-cp38-none-win_amd64.whl", hash = "sha256:3ccb2d8d95bd3890647f4f3bdd8e7d9059878ffda9fb7c29653ff8a7aad430ea"},
     {file = "statsmodels-0.13.1-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:12695c4a402ca136f00fae895fa1f4d58f05cbcac152b3d76edf49c64da4caca"},
     {file = "statsmodels-0.13.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:731391b28949deebb463810a213d05a344f00d739f49d4cc16873474bd28fba0"},
     {file = "statsmodels-0.13.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:bc972b34bed07e56d65edfc75f1dfa93ee7c0f00d1efd35b6242bed93b15547d"},
+    {file = "statsmodels-0.13.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e54f837ced60857029c198f51df87062a2cd9d620d6202d7c775b1405e66b690"},
     {file = "statsmodels-0.13.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b702959e76036bffe49943fffb23d6a3357b0283967ed97c45f2f0ca835702cb"},
     {file = "statsmodels-0.13.1-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:b80e72f86769b5862c19ba7257dc21e2b449c99eacd267b12fd41620480402a2"},
+    {file = "statsmodels-0.13.1-cp39-cp39-win32.whl", hash = "sha256:f39280920007633dba527a7f81d56230a6ffb04a79a9c364d4547fa46136d06f"},
     {file = "statsmodels-0.13.1-cp39-cp39-win_amd64.whl", hash = "sha256:50009b170800c7ae9635dc9eed57c50a6caa5fd0055afac7fd87510eeb6a7f83"},
     {file = "statsmodels-0.13.1-cp39-none-win32.whl", hash = "sha256:b80b0319df7b7c09e466a19c0e643eefce773c535b08c4de9589a6b81b3df4f1"},
     {file = "statsmodels-0.13.1-cp39-none-win_amd64.whl", hash = "sha256:939859be32cadf53617d6a24c05f3df1a5b03a5444b3ed26ae62ffa9ffe54169"},
@@ -1960,4 +2000,8 @@ virtualenv = [
 xdoctest = [
     {file = "xdoctest-0.15.10-py3-none-any.whl", hash = "sha256:7666bd0511df59275dfe94ef94b0fde9654afd14f00bf88902fdc9bcee77d527"},
     {file = "xdoctest-0.15.10.tar.gz", hash = "sha256:5f16438f2b203860e75ec594dbc38020df7524db0b41bb88467ea0a6030e6685"},
+]
+zipp = [
+    {file = "zipp-3.7.0-py3-none-any.whl", hash = "sha256:b47250dd24f92b7dd6a0a8fc5244da14608f3ca90a5efcd37a3b1642fac9a375"},
+    {file = "zipp-3.7.0.tar.gz", hash = "sha256:9f50f446828eb9d45b267433fd3e9da8d801f614129124863f9c51ebceafb87d"},
 ]
