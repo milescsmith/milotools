@@ -15,26 +15,36 @@ def diff_expr(
     logfc_threshold: float = 0.25,
 ) -> pd.DataFrame:
     """Calculate differential expression of one feature for one group versus
-    all other groups. Modeled after `find_markers()` from the R package {Seurat}.
+    all other groups. Modeled after `find_markers()` from the R package {Seurat}
 
-    Args:
-        df (pd.DataFrame): A wide-form dataframe, in the form of
-            `| grouping_col | value_col |`
-            where grouping_col is something like a cluster assignment
-            and value_col is the expression values for one feature
-            (gene, protein, etc...). Other columns may be present, but will be
-            ignored
-        grouping_col (str): Some sort of group identites
-        value_col (str): Expression values for one feature
-        expr_threshold (int, optional): Defaults to 0.
-        logfc_threshold (float, optional): Fold change threshold.  If the
-            group/every_other_group fold change is not greater than this, ignore.
-            Increasing this will improve the adjusted p value by decreasing
-            the number of multiple comparisons. Defaults to 0.25.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A wide-form dataframe, in the form of
+        `| grouping_col | value_col |`
+        where grouping_col is something like a cluster assignment
+        and value_col is the expression values for one feature
+        (gene, protein, etc...). Other columns may be present, but will be
+        ignored
+    grouping_col : str
+        Some sort of group identites
+    value_col : str
+        Expression values for one feature
+    expr_threshold : int, optional
+        Threshold below which a group will not be considered for comparison.
+        Decrease this value to improve adjusted P value, by default 0
+    logfc_threshold : float, optional
+        Fold change threshold.  If the
+        group/every_other_group fold change is not greater than this, ignore.
+        Increasing this will improve the adjusted p value by decreasing
+        the number of multiple comparisons, by default 0.25
 
-    Returns:
-        pd.DataFrame: [description]
-    """
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame in the form of
+        `| avg_log2FC | statistic | pvalue | pct_1 | pct_2 | marker | padj |`
+    """    
     unique_groups = df[grouping_col].unique()
     deg_dict = dict()
     stats_dict = dict()
@@ -114,6 +124,32 @@ def diff_expr_all(
     n_jobs: Optional[int]=None,
     *args
     ) -> pd.DataFrame:
+    """A multicomparison version of `diff_expr()` that, for a given grouping variable,
+    will perform all of the 1-vs-all comparisons for that variable.  Performs
+    comparisons in parallel.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A wide-form dataframe, in the form of
+        `| grouping_col | value_col |`
+        where grouping_col is something like a cluster assignment
+        and value_col is the expression values for one feature
+        (gene, protein, etc...). Other columns may be present, but will be
+        ignored
+    value_cols : str
+         Expression values for one feature
+    grouping_col : str
+        [description]
+    n_jobs : Optional[int], optional
+        [description], by default None
+    args : additional arguments to pass along to `diff_expr()`
+
+    Returns
+    -------
+    pd.DataFrame
+        [description]
+    """    
     
     if n_jobs is None:
         n_jobs=cpu_count()
