@@ -28,7 +28,7 @@ joblib = "^1.1.0"
 pytest = "^6.2.5"
 coverage = {extras = ["toml"], version = "^6.1"}
 safety = "^1.10.3"
-mypy = "^0.931"
+mypy = "^0.950"
 typeguard = "^2.13.0"
 xdoctest = {extras = ["colors"], version = "^0.15.10"}
 sphinx = "^4.2.0"
