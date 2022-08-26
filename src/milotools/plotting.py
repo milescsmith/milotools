@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from pandas.api.types import CategoricalDtype
+from typing import Any, Union
+
+import MuData as mu
+import AnnData as ad
 
 
 def map_series_palette(
@@ -144,3 +149,158 @@ def _(arr: pd.Series, lower: float = 0.10, upper: float = 0.99) -> pd.Series:
     lower_bounds = np.quantile(arr, lower)
     upper_bounds = np.quantile(arr, upper)
     return arr.apply(above_below, lower=lower_bounds, upper=upper_bounds)
+
+
+@singledispatch
+def find_obs_column(data, group: str):
+    pass
+
+
+@find_obs_column.register(ad.AnnData)
+def _(data: ad.AnnData, group: str) -> pd.Series:
+    if group in data.obs.columns:
+        group_sr = data.obs[group]
+    else:
+       raise KeyError(f"{group} not found in obs")
+    return group_sr
+
+
+@find_obs_column.register(mu.MuData)
+def _(mudata: mu.MuData, group: str) -> pd.Series:
+    if group in mudata.obs.columns:
+        group_sr = mudata.obs[group]
+    else:
+        if 'rna' in mudata.mod.keys() and group in mudata['rna'].obs.columns:
+            group_sr = mudata['rna'].obs[group]
+        elif 'prot' in mudata.mod.keys() and group in mudata['prot'].obs.columns:
+            group_sr = mudata['prot'].obs[group]
+        elif 'atac' in mudata.mod.keys() and group in mudata['atac'].obs.columns:
+            group_sr = mudata['atac'].obs[group]
+        else:
+            group_sr = pd.Series()
+            for _ in mudata.mod.keys():
+                if group in mudata[_].obs.columns:
+                    group_sr = mudata[_].obs[group]
+                    break
+            if group_sr.empty:
+                raise KeyError(f"{group} not found in the obs for any modality")
+    return group_sr
+
+
+@singledispatch
+def find_embedding(data, basis: str):
+    pass
+
+
+@find_embedding.register(ad.AnnData)
+def _(data: ad.AnnData, basis: str) -> np.ndarray:
+    if basis in data.obsm:
+        basis_arr = data.obsm[basis]
+    else:
+         raise KeyError(f"{basis} not found in obsm")
+    return basis_arr
+
+
+@find_embedding.register(mu.MuData)
+def _(data: mu.MuData, basis: str) -> np.ndarray:
+    if basis in data.obsm:
+        basis_arr = data.obsm[basis]
+    elif 'rna' in data.mod.keys() and basis in data['rna'].obsm:
+        basis_arr = data['rna'].obsm[basis]
+    elif 'prot' in data.mod.keys() and basis in data['prot'].obsm:
+        basis_arr = data['prot'].obsm[basis]
+    elif 'atac' in data.mod.keys() and basis in data['atac'].obsm:
+        basis_arr = data['atac'].obsm[basis]
+    else:
+        basis_arr = np.empty((0,0))
+        for _ in data.mod.keys():
+            if basis in data[_].obsm:
+                basis_arr = data[_].obsm[basis]
+                break
+        if np.size(basis_arr) == 0:
+            raise KeyError(f"{basis} not found in the obsm for any modality")
+    return basis_arr
+
+
+def highlight_group_plot(
+    data: Union[ad.AnnData, mu.MuData],
+    group1: str,
+    group1_val: Any,
+    group2: str,
+    group2_val: Any,
+    group1_color: str="grey",
+    group2_color: str="red",
+    alpha: float=0.5,
+    basis: str="umap",
+    uninteresting_size: int=1,
+    interesting_size: int=100,
+    width: int=6,
+    height: int=6,
+    fontsize: int=9,
+    style: str="white",
+    *args,
+    **kwargs
+) -> None:
+    group1_sr = find_obs_column(data, group1)
+    group2_sr = find_obs_column(data, group2)
+    
+    interest_cat = CategoricalDtype(categories=[group1_val, group2_val], ordered=False)
+    interest_sr = pd.Series(data=group1_val, name="of_interest", dtype=interest_cat, index=group1_sr.index)
+    size_sr = pd.Series(data=uninteresting_size, name="interest_size", dtype=float, index=group1_sr.index)
+    
+    interest_df = pd.merge(
+        left=group1_sr,
+        right=group2_sr,
+        left_index=True,
+        right_index=True
+    ).join(
+        interest_sr
+    ).join(
+        size_sr
+    )
+    
+    interest_df.loc[
+        interest_df[(interest_df[group1] == group1_val) & (interest_df[group2] == group2_val)].index,
+        "of_interest"
+    ] = group2_val
+
+    interest_df.loc[
+        interest_df[(interest_df[group1] == group1_val) & (interest_df[group2] == group2_val)].index,
+        "interest_size"
+    ] = interesting_size
+    
+    try:
+        basis_arr = find_embedding(data, basis)
+    except KeyError:
+        basis_arr = find_embedding(mudata, f"X_{basis}")
+        basis = f"X_{basis}"
+        
+    basis_df = pd.DataFrame(
+        data=basis_arr,
+        index=interest_df.index
+    )
+    
+    basis_df.columns = [f"{basis}{_+1}" for _ in basis_df.columns]
+    
+    interest_df = interest_df.join(basis_df)
+    
+    fig, ax = plt.subplots(figsize=(width,height))
+    if style is None:
+        sns.set_style("white")
+    else:
+        sns.set_style(style)
+
+    sns.scatterplot(
+        data=interest_df.sort_values("of_interest"),
+        x=f"{basis}1",
+        y=f"{basis}2",
+        hue="of_interest",
+        size="of_interest",
+        sizes={group1_val: uninteresting_size, group2_val: interesting_size},
+        palette={group1_val: group1_color, group2_val: group2_color},
+        alpha=alpha,
+        ax=ax,
+        *args,
+        **kwargs
+    )
+    plt.show()

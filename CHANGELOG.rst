@@ -1,3 +1,9 @@
+Version 0.10.0
+
+:Data: 2022-07-08
+
+* `plotting`: added a function `highlight_group_plot` to highlight one group on a scatterplot
+
 Version 0.9.0
 
 :Date: 2022-01-22
