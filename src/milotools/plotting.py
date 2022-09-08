@@ -9,8 +9,8 @@ import seaborn as sns
 from pandas.api.types import CategoricalDtype
 from typing import Any, Union
 
-import MuData as mu
-import AnnData as ad
+import mudata as mu
+import anndata as ad
 
 
 def map_series_palette(
