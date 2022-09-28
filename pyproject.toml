@@ -29,7 +29,7 @@ muon = "^0.1.2"
 pytest = "^6.2.5"
 coverage = {extras = ["toml"], version = "^6.1"}
 safety = "^1.10.3"
-mypy = "^0.961"
+mypy = "^0.981"
 typeguard = "^2.13.0"
 xdoctest = {extras = ["colors"], version = "^0.15.10"}
 sphinx = "^5.0.2"
